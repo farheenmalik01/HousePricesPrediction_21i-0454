@@ -3,10 +3,13 @@ name: CI - Development
 on:
   push:
     branches:
-      - development
+      - dev
+  pull_request:
+    branches:
+      - dev
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,7 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
           python-version: '3.8'
 
@@ -23,6 +26,30 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Lint code
+        run: |
+          pylint app.py main.py test.py
+
       - name: Run tests
         run: |
           python -m unittest discover
+
+      - name: Build Docker Image
+        run: |
+          docker build -t mlopsassignment1:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker tag mlopsassignment1:latest farheenmalik01/mlopsassignment1:dev
+          docker push farheenmalik01/mlopsassignment1:dev
+
+      - name: Deploy to Development
+        env:
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          curl -sL https://vercel.com/download -o vercel.zip
+          unzip vercel.zip
+          ./vercel login $VERCEL_TOKEN
+          ./vercel --prod --confirm --token $VERCEL_TOKEN --project $VERCEL_PROJECT_ID --org $VERCEL_ORG_ID

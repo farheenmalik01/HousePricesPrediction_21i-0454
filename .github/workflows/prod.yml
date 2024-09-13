@@ -1,55 +1,55 @@
-name: CD - Production
+name: CI - Production
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.8'
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.8'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Run tests
-      run: |
-        python -m unittest discover
+      - name: Lint code
+        run: |
+          pylint app.py main.py test.py
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Run tests
+        run: |
+          python -m unittest discover
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.8'
+      - name: Build Docker Image
+        run: |
+          docker build -t mlopsassignment1:latest .
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Push Docker Image
+        run: |
+          docker tag mlopsassignment1:latest farheenmalik01/mlopsassignment1:prod
+          docker push farheenmalik01/mlopsassignment1:prod
 
-    - name: Deploy to Production
-      env:
-        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      run: |
-        curl -LO https://github.com/vercel/vercel/releases/download/v14.0.0-canary.0/vercel-packages-sdk-v14.0.0-canary.0.tar.gz
-        file vercel-packages-sdk-v14.0.0-canary.0.tar.gz
-        tar -xzvf vercel-packages-sdk-v14.0.0-canary.0.tar.gz
+      - name: Deploy to Production
+        env:
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          curl -sL https://vercel.com/download -o vercel.zip
+          unzip vercel.zip
+          ./vercel login $VERCEL_TOKEN
+          ./vercel --prod --confirm --token $VERCEL_TOKEN --project $VERCEL_PROJECT_ID --org $VERCEL_ORG_ID
