@@ -57,13 +57,11 @@ jobs:
     needs: build-and-push-docker
 
     steps:
-      - name: Set up Vercel CLI
-        run: |
-          curl -sL https://vercel.com/download -o vercel.zip
-          unzip vercel.zip
-          sudo mv vercel /usr/local/bin
-
       - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          vercel login ${{ secrets.VERCEL_TOKEN }}
-          vercel --token ${{ secrets.VERCEL_TOKEN }} --scope farheenmalik01 --confirm
+          curl -fsSL https://vercel.com/download -o vercel
+          chmod +x vercel
+          ./vercel login $VERCEL_TOKEN
+          ./vercel --prod
