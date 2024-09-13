@@ -30,6 +30,10 @@ jobs:
         run: |
           python -m unittest discover
 
+      - name: Login to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u farheenmalik01 --dckr_pat_MMTObk4P11P_nayYd2I-QTb5K8o-stdin
+
       - name: Build Docker Image
         run: |
           docker build -t mlopsassignment1:latest .
