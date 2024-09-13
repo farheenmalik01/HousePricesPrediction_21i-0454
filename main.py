@@ -1,30 +1,31 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import pickle
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from joblib import dump
+import numpy as np
 
-def load_and_preprocess_data(file_path):
-    data = pd.read_csv(file_path)
-    X = data[['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'guestroom', 'basement', 'hotwaterheating', 'airconditioning', 'parking', 'prefarea']]
-    y = data['price']
+# Load the dataset
+data = pd.read_csv('Housing.csv')
 
-    X = pd.get_dummies(X, drop_first=True)
+# Data Preprocessing
+X = data[['area', 'bedrooms', 'bathrooms', 'stories', 'parking']]
+y = data['price']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    return X_train, X_test, y_train, y_test
+# Handling missing values (if any)
+X.fillna(X.mean(), inplace=True)
 
-def train_model(X_train, y_train):
-    model = RandomForestRegressor(n_estimators=100, random_state=42)
-    model.fit(X_train, y_train)
-    return model
+# Splitting the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-def save_model(model, filename):
-    with open(filename, 'wb') as file:
-        pickle.dump(model, file)
+# Model Training
+model = LinearRegression()
+model.fit(X_train, y_train)
 
-if __name__ == "__main__":
-    X_train, X_test, y_train, y_test = load_and_preprocess_data('data/Housing.csv')
-    model = train_model(X_train, y_train)
-    save_model(model, 'house_price_model.pkl')
-    print("Model trained and saved successfully.")
+# Model Evaluation
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+print(f"Mean Squared Error: {mse}")
+
+# Save the trained model
+dump(model, 'house_price_model.joblib')

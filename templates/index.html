@@ -4,120 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>House Price Prediction</title>
-    <style>
-        .container {
-            width: 50%;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-top: 10px;
-        }
-        input[type="number"], input[type="checkbox"] {
-            margin-bottom: 10px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 1.5em;
-            color: #333;
-        }
-    </style>
-    <script>
-        async function predictPrice() {
-            const data = {
-                area: document.getElementById('area').value,
-                bedrooms: document.getElementById('bedrooms').value,
-                bathrooms: document.getElementById('bathrooms').value,
-                stories: document.getElementById('stories').value,
-                mainroad_yes: document.getElementById('mainroad').checked ? 1 : 0,
-                guestroom_yes: document.getElementById('guestroom').checked ? 1 : 0,
-                basement_yes: document.getElementById('basement').checked ? 1 : 0,
-                hotwaterheating_yes: document.getElementById('hotwaterheating').checked ? 1 : 0,
-                airconditioning_yes: document.getElementById('airconditioning').checked ? 1 : 0,
-                parking: document.getElementById('parking').value,
-                prefarea_yes: document.getElementById('prefarea').checked ? 1 : 0
-            };
-
-            try {
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-                if (result.error) {
-                    document.getElementById('result').innerText = 'Error: ' + result.error;
-                } else {
-                    document.getElementById('result').innerText = 'Predicted Price: $' + result.predicted_price.toFixed(2);
-                }
-            } catch (error) {
-                document.getElementById('result').innerText = 'An error occurred. Please try again.';
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>House Price Prediction</h1>
-        <form onsubmit="event.preventDefault(); predictPrice();">
-            <label for="area">Area (in sq. ft.):</label>
-            <input type="number" id="area" step="0.01" required>
+    <h1>House Price Prediction</h1>
+    <form id="prediction-form">
+        <label>Area (sq ft):</label><input type="number" id="area" required><br>
+        <label>Bedrooms:</label><input type="number" id="bedrooms" required><br>
+        <label>Bathrooms:</label><input type="number" id="bathrooms" required><br>
+        <label>Stories:</label><input type="number" id="stories" required><br>
+        <label>Parking:</label><input type="number" id="parking" required><br>
+        <button type="submit">Predict Price</button>
+    </form>
+    <div id="result"></div>
 
-            <label for="bedrooms">Number of Bedrooms:</label>
-            <input type="number" id="bedrooms" step="1" required>
-
-            <label for="bathrooms">Number of Bathrooms:</label>
-            <input type="number" id="bathrooms" step="1" required>
-
-            <label for="stories">Number of Stories:</label>
-            <input type="number" id="stories" step="1" required>
-
-            <label for="mainroad">Located on Main Road:</label>
-            <input type="checkbox" id="mainroad">
-
-            <label for="guestroom">Has Guestroom:</label>
-            <input type="checkbox" id="guestroom">
-
-            <label for="basement">Has Basement:</label>
-            <input type="checkbox" id="basement">
-
-            <label for="hotwaterheating">Has Hot Water Heating:</label>
-            <input type="checkbox" id="hotwaterheating">
-
-            <label for="airconditioning">Has Air Conditioning:</label>
-            <input type="checkbox" id="airconditioning">
-
-            <label for="parking">Number of Parking Spaces:</label>
-            <input type="number" id="parking" step="1" required>
-
-            <label for="prefarea">Located in Preferred Area:</label>
-            <input type="checkbox" id="prefarea">
-
-            <button type="submit">Predict</button>
-        </form>
-        <h2 id="result"></h2>
-    </div>
+    <script>
+        document.getElementById('prediction-form').onsubmit = async function (e) {
+            e.preventDefault();
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    area: document.getElementById('area').value,
+                    bedrooms: document.getElementById('bedrooms').value,
+                    bathrooms: document.getElementById('bathrooms').value,
+                    stories: document.getElementById('stories').value,
+                    parking: document.getElementById('parking').value
+                })
+            });
+            const data = await response.json();
+            document.getElementById('result').innerHTML = `Predicted Price: $${data.predicted_price.toFixed(2)}`;
+        };
+    </script>
 </body>
 </html>

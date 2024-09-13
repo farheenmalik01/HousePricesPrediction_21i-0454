@@ -1,30 +1,31 @@
 from flask import Flask, request, jsonify
-from flask import render_template
-import pickle
-import pandas as pd
+from joblib import load
+import numpy as np
 
 app = Flask(__name__)
 
-with open('house_price_model.pkl', 'rb') as file:
-    model = pickle.load(file)
+# Load the trained model
+model = load('house_price_model.joblib')
 
-def home():
-    return render_template('index.html')
+@app.route('/')
+def index():
+    return "House Price Prediction API is running. Use the /predict endpoint to make predictions."
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        data = request.get_json(force=True)
-        df = pd.DataFrame(data, index=[0])
+        data = request.get_json()
+        area = float(data['area'])
+        bedrooms = int(data['bedrooms'])
+        bathrooms = int(data['bathrooms'])
+        stories = int(data['stories'])
+        parking = int(data['parking'])
 
-        expected_columns = ['area', 'bedrooms', 'bathrooms', 'stories', 'mainroad_yes', 'guestroom_yes', 
-                            'basement_yes', 'hotwaterheating_yes', 'airconditioning_yes', 'parking', 'prefarea_yes']
-        for col in expected_columns:
-            if col not in df.columns:
-                df[col] = 0
+        # Validate input data
+        input_features = np.array([[area, bedrooms, bathrooms, stories, parking]])
+        prediction = model.predict(input_features)
         
-        prediction = model.predict(df[expected_columns])[0]
-        return jsonify({'predicted_price': prediction})
+        return jsonify({'predicted_price': prediction[0]})
     except Exception as e:
         return jsonify({'error': str(e)})
 
