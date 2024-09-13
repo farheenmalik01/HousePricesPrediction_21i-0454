@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask import render_template
 from joblib import load
 import numpy as np
 
@@ -9,7 +10,7 @@ model = load('house_price_model.joblib')
 
 @app.route('/')
 def index():
-    return "House Price Prediction API is running. Use the /predict endpoint to make predictions."
+    return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
