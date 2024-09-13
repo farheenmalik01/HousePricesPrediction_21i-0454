@@ -320,3 +320,23 @@ To maintain code quality, a code review process must be established where team m
 ### Summary
 
 By following these steps, your team can effectively manage the MLOps project using GitHub. The milestones and issues help track progress, while the pull requests and code review process ensure code quality and collaboration. This workflow aligns with modern MLOps best practices and provides a robust framework for developing, testing, and deploying machine learning models as a service.
+
+
+
+
+
+
+
+
+
+
+      - name: Deploy to Staging
+        env:
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          curl -sL https://vercel.com/download -o vercel.zip
+          unzip vercel.zip
+          ./vercel login $VERCEL_TOKEN
+          ./vercel --prod --confirm --token $VERCEL_TOKEN --project $VERCEL_PROJECT_ID --org $VERCEL_ORG_ID
