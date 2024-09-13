@@ -50,6 +50,6 @@ jobs:
         VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       run: |
-        curl -O https://github.com/vercel/vercel/releases/download/v30.0.1/vercel-v30.0.1-linux-x64.tar.gz
-        tar -xzf vercel-v30.0.1-linux-x64.tar.gz
-        ./vercel --prod --confirm
+        curl -O https://github.com/vercel/vercel/releases/download/v14.0.0-canary.0/vercel-packages-sdk-v14.0.0-canary.0.tar.gz
+        file vercel-packages-sdk-v14.0.0-canary.0.tar.gz
+        tar -xzvf vercel-packages-sdk-v14.0.0-canary.0.tar.gz
