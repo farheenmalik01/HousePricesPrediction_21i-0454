@@ -57,16 +57,11 @@ jobs:
     needs: build-and-push-docker
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Install Vercel CLI
         run: npm i -g vercel
 
-      - name: Vercel Login
-        run: vercel login --token ${{ secrets.VERCEL_TOKEN }}
-
       - name: Deploy to Vercel
-        run: vercel --prod
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel --token $VERCEL_TOKEN --prod
