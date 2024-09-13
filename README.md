@@ -340,3 +340,5 @@ By following these steps, your team can effectively manage the MLOps project usi
           unzip vercel.zip
           ./vercel login $VERCEL_TOKEN
           ./vercel --prod --confirm --token $VERCEL_TOKEN --project $VERCEL_PROJECT_ID --org $VERCEL_ORG_ID
+
+          OQ1Pvda64wqCBd3Fyi2gMPwv

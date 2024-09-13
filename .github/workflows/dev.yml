@@ -61,7 +61,11 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          curl -fsSL https://vercel.com/download -o vercel
-          chmod +x vercel
-          ./vercel login $VERCEL_TOKEN
-          ./vercel --prod
+          # Prepare the API request
+          curl -X POST "https://api.vercel.com/v12/now/deployments" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -F "files=@./path-to-your-file.zip" \
+            -F "name=your-project-name" \
+            -F "target=production" \
+            -F "meta[branch]=${{ github.ref }}" \
+            -F "meta[commit]=${{ github.sha }}"
