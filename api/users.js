@@ -1,20 +1,27 @@
+import { Router } from 'express';
+const router = Router();
 
-module.exports = (req, res) => {
-    const { method } = req;
-  
-    switch (method) {
-      case 'GET':
+router.get('/', (req, res) => {
+  res.json({ message: 'List of users' });
+});
 
-        res.status(200).json({ message: 'Fetch user data' });
-        break;
-      case 'POST':
+router.get('/:id', (req, res) => {
+  const userId = req.params.id;
+  res.json({ message: `Details of user with ID ${userId}` });
+});
 
-        res.status(201).json({ message: 'User created' });
-        break;
+router.post('/', (req, res) => {
+  res.json({ message: 'User created' });
+});
 
-      default:
-        res.setHeader('Allow', ['GET', 'POST']);
-        res.status(405).end(`Method ${method} Not Allowed`);
-    }
-  };
-  
+router.put('/:id', (req, res) => {
+  const userId = req.params.id;
+  res.json({ message: `User with ID ${userId} updated` });
+});
+
+router.delete('/:id', (req, res) => {
+  const userId = req.params.id;
+  res.json({ message: `User with ID ${userId} deleted` });
+});
+
+export default router;
