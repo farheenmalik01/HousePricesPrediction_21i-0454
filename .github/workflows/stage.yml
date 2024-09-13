@@ -50,6 +50,11 @@ jobs:
         VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       run: |
-        curl -O https://github.com/vercel/vercel/archive/refs/tags/@vercel/static-build@2.5.24.tar.gz
-        tar -xzf vercel-packages-sdk-v14.0.0-canary.0.tar.gz
-        ./vercel --confirm
+        curl -LO https://github.com/vercel/vercel/archive/refs/tags/packages/sdk/v14.0.0-canary.0.zip
+
+    - name: Unzip Package
+      run: unzip vercel-packages-sdk-v14.0.0-canary.0.zip
+
+
+  
+
