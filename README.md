@@ -105,3 +105,22 @@ While Vercel is primarily built around the JavaScript ecosystem, it does support
 ### Conclusion
 
 By following these steps, you can deploy a Flask application to Vercel without using Node.js or the Vercel CLI. Instead, you are leveraging Vercel's web interface and GitHub integration for a smooth deployment process. If you have any more questions or need further clarification, feel free to ask!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+git add <file_name>          # Stage a specific file
+git add .                    # Stage all changes
+git commit -m "Descriptive message"  # Commit changes
+git pull origin main         # Pull the latest changes from the main branch
+git push origin main         # Push changes to the main branch
