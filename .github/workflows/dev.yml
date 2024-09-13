@@ -41,7 +41,7 @@ jobs:
 
       - name: Push Docker Image
         run: |
-          docker tag mlopsassignment1:latest farheenmalik01/mlopsassignment1:dev
+          docker tag mlopsassignment1 farheenmalik01/mlopsassignment1:dev
           docker push farheenmalik01/mlopsassignment1:dev
 
       - name: Deploy to Development
