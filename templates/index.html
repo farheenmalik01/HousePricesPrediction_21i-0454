@@ -4,23 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>House Price Prediction</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="number"] {
+            margin-bottom: 30px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input[type="checkbox"] {
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #333;
+        }
+
+
+    </style>
 </head>
 <body>
-    <h1>House Price Prediction</h1>
-    <form id="prediction-form">
-        <label>Area (sq ft):</label><input type="number" id="area" required><br>
-        <label>Bedrooms:</label><input type="number" id="bedrooms" required><br>
-        <label>Bathrooms:</label><input type="number" id="bathrooms" required><br>
-        <label>Stories:</label><input type="number" id="stories" required><br>
-        <label>Parking:</label><input type="number" id="parking" required><br>
-        <button type="submit">Predict Price</button>
-    </form>
-    <div id="result"></div>
+    <div class="container">
+        <h1>House Price Prediction</h1>
+        <form id="prediction-form">
+            <label for="area">Area (in sq. ft.):</label>
+            <input type="number" id="area" step="0.01" required>
+
+            <label for="bedrooms">Number of Bedrooms:</label>
+            <input type="number" id="bedrooms" step="1" required>
+
+            <label for="bathrooms">Number of Bathrooms:</label>
+            <input type="number" id="bathrooms" step="1" required>
+
+            <label for="stories">Number of Stories:</label>
+            <input type="number" id="stories" step="1" required>
+
+            <label for="mainroad">Located on Main Road:</label>
+            <input type="checkbox" id="mainroad">
+
+            <label for="guestroom">Has Guestroom:</label>
+            <input type="checkbox" id="guestroom">
+
+            <label for="basement">Has Basement:</label>
+            <input type="checkbox" id="basement">
+
+            <label for="hotwaterheating">Has Hot Water Heating:</label>
+            <input type="checkbox" id="hotwaterheating">
+
+            <label for="airconditioning">Has Air Conditioning:</label>
+            <input type="checkbox" id="airconditioning">
+
+            <label for="parking">Number of Parking Spaces:</label>
+            <input type="number" id="parking" step="1" required>
+
+            <label for="prefarea">Located in Preferred Area:</label>
+            <input type="checkbox" id="prefarea">
+
+            <button type="submit">Predict</button>
+        </form>
+        <div id="result"></div>
+    </div>
 
     <script>
         document.getElementById('prediction-form').onsubmit = async function (e) {
             e.preventDefault();
+            
             const response = await fetch('/predict', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -29,9 +131,16 @@
                     bedrooms: document.getElementById('bedrooms').value,
                     bathrooms: document.getElementById('bathrooms').value,
                     stories: document.getElementById('stories').value,
-                    parking: document.getElementById('parking').value
+                    mainroad_yes: document.getElementById('mainroad').checked ? 1 : 0,
+                    guestroom_yes: document.getElementById('guestroom').checked ? 1 : 0,
+                    basement_yes: document.getElementById('basement').checked ? 1 : 0,
+                    hotwaterheating_yes: document.getElementById('hotwaterheating').checked ? 1 : 0,
+                    airconditioning_yes: document.getElementById('airconditioning').checked ? 1 : 0,
+                    parking: document.getElementById('parking').value,
+                    prefarea_yes: document.getElementById('prefarea').checked ? 1 : 0
                 })
             });
+
             const data = await response.json();
             document.getElementById('result').innerHTML = `Predicted Price: $${data.predicted_price.toFixed(2)}`;
         };
