@@ -58,5 +58,6 @@ jobs:
 
     steps:
       - name: Deploy to Vercel
-        run: |
-          vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
+        run: vercel --prod
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
